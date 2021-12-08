@@ -1,0 +1,119 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#>.
+@prefix doap: <http://usefulinc.com/ns/doap#>.
+@prefix epp: <http://lv2plug.in/ns/ext/port-props#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix mod: <http://moddevices.com/ns/modgui#>.
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix pset: <http://lv2plug.in/ns/ext/presets#>.
+
+<http://moddevices.com/plugins/mod-devel/System-Compressor>
+a lv2:Plugin, lv2:DynamicsPlugin;
+
+doap:name "Compressor";
+
+doap:developer [
+    foaf:name "VeJa Plugins";
+    foaf:homepage <>;
+    foaf:mbox <mailto:jan@moddevices.com>;
+    ];
+
+doap:maintainer [
+    foaf:name "MOD Devices";
+    foaf:homepage <http://moddevices.com>;
+    foaf:mbox <mailto:jan@moddevices.com>;
+    ];
+
+    lv2:minorVersion 1;
+    lv2:microVersion 1;
+
+rdfs:comment """
+
+The MOD Compressor is a streamlined high quality end-of-chain compressor which can also be found in the MOD Dwarf's output processing settings.
+
+There are 4 modes available: off, light, mild and heavy compression.
+There is also a release time parameter, and a simple gain parameter.
+For more in depth control, try the MOD Compressor Advanced plugin.
+
+Features:
+Modeled by VeJa Plugins
+Plugin by MOD Devices
+
+""";
+
+lv2:port
+[
+    a lv2:AudioPort, lv2:InputPort;
+    lv2:index 0;
+    lv2:symbol "Input_L";
+    lv2:name "Input Left";
+    lv2:shortname "Input Left";
+],
+[
+    a lv2:AudioPort, lv2:InputPort;
+    lv2:index 1;
+    lv2:symbol "Input_R";
+    lv2:name "Input Right";
+    lv2:shortname "Input RIGHT";
+],
+[
+    a lv2:AudioPort, lv2:OutputPort;
+    lv2:index 2;
+    lv2:symbol "Output_L";
+    lv2:name "Output Left";
+    lv2:shortname "Output Left";
+],
+[
+    a lv2:AudioPort, lv2:OutputPort;
+    lv2:index 3;
+    lv2:symbol "Output_R";
+    lv2:name "Output Right";
+    lv2:shortname "Output Right";
+],
+[
+    a lv2:InputPort, lv2:ControlPort;
+    lv2:index 4;
+    lv2:symbol "COMP_MODE";
+    lv2:name "Comp Mode";
+    lv2:portProperty lv2:enumeration , lv2:integer ;
+    lv2:default 0 ;
+    lv2:minimum 0 ;
+    lv2:maximum 4 ;
+    lv2:scalePoint
+    [
+        rdfs:label "Off" ;
+        rdf:value 0 
+    ] , [
+        rdfs:label "Light Comp" ;
+        rdf:value 1 
+    ] , [
+        rdfs:label "Mild Comp" ;
+        rdf:value 2 
+    ] , [
+        rdfs:label "Heavy Comp" ;
+        rdf:value 3 
+    ]
+],
+[
+    a lv2:ControlPort, lv2:InputPort;
+    lv2:index 5;
+    lv2:symbol "RELEASE";
+    lv2:name "Release";
+    lv2:shortname "Release";
+    lv2:default 100;
+    lv2:minimum 50;
+    lv2:maximum 1000;
+    units:unit   units:ms
+],
+[
+    a lv2:ControlPort, lv2:InputPort;
+    lv2:index 6;
+    lv2:symbol "MASTER_VOL";
+    lv2:name "Master Volume";
+    lv2:shortname "MasterVol";
+    lv2:default 0;
+    lv2:minimum -30;
+    lv2:maximum 30;
+    units:unit   units:db
+]
+.

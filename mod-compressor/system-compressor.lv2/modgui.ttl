@@ -1,0 +1,30 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<http://moddevices.com/plugins/mod-devel/System-Compressor>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-compressor.html> ;
+        modgui:stylesheet <modgui/stylesheet-compressor.css> ;
+        modgui:screenshot <modgui/screenshot-compressor.png> ;
+        modgui:thumbnail <modgui/thumbnail-compressor.png> ;
+        modgui:brand "MOD" ;
+        modgui:label "Compressor" ;
+        modgui:model "boxy" ;
+        modgui:panel "1-select-2-knobs" ;
+        modgui:color "black" ;
+        modgui:knob "silver" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "COMP_MODE" ;
+            lv2:name "Mode" ;
+        ] , [
+            lv2:index 1 ;
+            lv2:symbol "RELEASE" ;
+            lv2:name "Release" ;
+        ] , [
+            lv2:index 2 ;
+            lv2:symbol "MASTER_VOL" ;
+            lv2:name "Master" ;
+        ] ;
+    ] .

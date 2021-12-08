@@ -1,0 +1,30 @@
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:    <http://lv2plug.in/ns/lv2core#> .
+
+<http://moddevices.com/plugins/mod-devel/System-NoiseGate>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-noise-gate.html> ;
+        modgui:stylesheet <modgui/stylesheet-noise-gate.css> ;
+        modgui:screenshot <modgui/screenshot-noise-gate.png> ;
+        modgui:thumbnail <modgui/thumbnail-noise-gate.png> ;
+        modgui:brand "MOD" ;
+        modgui:label "Noise Gate" ;
+        modgui:model "boxy" ;
+        modgui:panel "1-select-2-knobs" ;
+        modgui:color "black" ;
+        modgui:knob "silver" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "Gate_Mode" ;
+            lv2:name "Mode" ;
+        ] , [
+            lv2:index 1 ;
+            lv2:symbol "Threshold" ;
+            lv2:name "Threshold" ;
+        ] , [
+            lv2:index 2 ;
+            lv2:symbol "Decay" ;
+            lv2:name "Decay" ;
+        ] ;
+    ] .
