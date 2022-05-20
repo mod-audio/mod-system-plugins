@@ -101,7 +101,7 @@ lv2:port
     lv2:name "Threshold";
     lv2:shortname "Threshold";
     lv2:default -60;
-    lv2:minimum -80;
+    lv2:minimum -70;
     lv2:maximum -10;
     units:unit   units:db
 ],
@@ -113,6 +113,6 @@ lv2:port
     lv2:shortname "Decay";
     lv2:default 10;
     lv2:minimum 1;
-    lv2:maximum 1000;
+    lv2:maximum 500;
     units:unit   units:ms
 ].

@@ -102,7 +102,7 @@ lv2:port
     lv2:shortname "Release";
     lv2:default 100;
     lv2:minimum 50;
-    lv2:maximum 1000;
+    lv2:maximum 500;
     units:unit   units:ms
 ],
 [
@@ -113,7 +113,7 @@ lv2:port
     lv2:shortname "MasterVol";
     lv2:default 0;
     lv2:minimum -30;
-    lv2:maximum 30;
+    lv2:maximum 20;
     units:unit   units:db
 ]
 .
