@@ -29,11 +29,11 @@ doap:maintainer [
     lv2:microVersion 0;
 
 rdfs:comment """
-The MOD Noise Gate is a streamlined, easy-to-use Noise Gate plugin which can also be found in the MOD Dwarf's input processing settings.
 
-There is a parameter to set which channel to apply the noise gate to: none, channel 1, channel 2 or stereo.
-There is also a threshold parameter, and a decay time parameter.
-For more in depth control, try the MOD Noise Gate Advanced plugin.
+The MOD Noise Gate Advanced uses the same algorithm as the Noise Gate found in the MOD Dwarf's input processing settings.
+
+This advanced version exposes all parameters of the algorithm, and therefore allows for more in depth control.
+For a more streamlined experience, try the MOD Noise Gate plugin.
 
 Features:
 Modeled by VeJa Plugins
