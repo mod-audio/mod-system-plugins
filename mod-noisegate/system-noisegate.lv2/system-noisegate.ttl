@@ -6,7 +6,7 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix pset: <http://lv2plug.in/ns/ext/presets#>.
-@prefix units: http://lv2plug.in/ns/extensions/units#.
+@prefix units: <http://lv2plug.in/ns/extensions/units#>.
 
 <http://moddevices.com/plugins/mod-devel/System-NoiseGate>
 a lv2:Plugin, lv2:DynamicsPlugin;
@@ -30,7 +30,7 @@ doap:maintainer [
 
 rdfs:comment """
 
-The MOD Noise Gate is a streamlined, easy-to-use Noise Gate plugin which can also be found in the MOD Dwarf's input processing settings.
+The MOD Noise Gate is a streamlined, easy-to-use Noise Gate plugin which can also be found in the MOD Dwarf's and Duox's input processing settings.
 
 There is a parameter to set which channel to apply the noise gate to: none, channel 1, channel 2 or stereo.
 There is also a threshold parameter, and a decay time parameter.

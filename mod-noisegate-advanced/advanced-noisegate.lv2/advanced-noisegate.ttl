@@ -30,7 +30,7 @@ doap:maintainer [
 
 rdfs:comment """
 
-The MOD Noise Gate Advanced uses the same algorithm as the Noise Gate found in the MOD Dwarf's input processing settings.
+The MOD Noise Gate Advanced uses the same algorithm as the Noise Gate found in the MOD Dwarf's and Duox's input processing settings.
 
 This advanced version exposes all parameters of the algorithm, and therefore allows for more in depth control.
 For a more streamlined experience, try the MOD Noise Gate plugin.
