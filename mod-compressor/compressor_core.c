@@ -59,6 +59,14 @@ static inline float clampf(float v, float min, float max){
 	return v < min ? min : (v > max ? max : v);
 }
 
+static inline float absf(float v){
+	return v < 0.0f ? -v : v;
+}
+
+static inline float maxf(float v1, float v2){
+	return v1 > v2 ? v1 : v2;
+}
+
 static inline float fixf(float v, float def){
 	if (isnan(v) || isinf(v))
 		return def;
@@ -92,7 +100,7 @@ void compressor_set_params(sf_compressor_state_st *state, float threshold,
 	float attacksamplesinv = 1.0f / attacksamples;
 	float releasesamples = state->samplerate * release;
 	float satrelease = 0.0025f; // seconds
-	float satreleasesamplesinv = 1.0f / ((float)state->samplerate * satrelease);
+	float satreleasesamplesinv = 1.0f / (state->samplerate * satrelease);
 
 	// calculate knee curve parameters
 	float k = 5.0f; // initial guess
@@ -148,7 +156,7 @@ void compressor_set_params(sf_compressor_state_st *state, float threshold,
 	state->d                    = d;
 }
 
-void compressor_process(sf_compressor_state_st *state, int size, float *input_L, float *input_R, float *output_L, float *output_R)
+void compressor_process(sf_compressor_state_st *state, int size, const float *input_L, const float *input_R, float *output_L, float *output_R)
 {
 	// pull out the state into local variables
 	float threshold            = state->threshold;
@@ -169,7 +177,8 @@ void compressor_process(sf_compressor_state_st *state, int size, float *input_L,
 	float compgain             = state->compgain;
 	float maxcompdiffdb        = state->maxcompdiffdb;
 
-	int chunks = size / SF_COMPRESSOR_SPU;
+	int chunks = size > SF_COMPRESSOR_SPU ? size / SF_COMPRESSOR_SPU : 1;
+	int spu = size > SF_COMPRESSOR_SPU ? SF_COMPRESSOR_SPU : size;
 	int samplepos = 0;
 
 	for (int ch = 0; ch < chunks; ch++){
@@ -185,7 +194,8 @@ void compressor_process(sf_compressor_state_st *state, int size, float *input_L,
 			maxcompdiffdb = -1; // reset for a future attack mode
 			// apply the adaptive release curve
 			// scale compdiffdb between 0-3
-			float releasesamples = adaptivereleasecurve(((clampf(compdiffdb, -12.0f, 0.0f) + 12.0f) * 0.25f), a, b, c, d);
+			float x = (clampf(compdiffdb, -12.0f, 0.0f) + 12.0f) * 0.25f;
+			float releasesamples = adaptivereleasecurve(x, a, b, c, d);
 			enveloperate = cmop_db2lin(5.0f / releasesamples);
 		}
 		else{ // compresorgain > scaleddesiredgain, so we're attacking
@@ -199,25 +209,25 @@ void compressor_process(sf_compressor_state_st *state, int size, float *input_L,
 		}
 
 		// process the chunk
-		for (int chi = 0; chi < SF_COMPRESSOR_SPU; chi++, samplepos++)
+		for (int chi = 0; chi < spu && samplepos < size; chi++, samplepos++)
 		{
-			float inputmax;
-			if (input_R)
-				inputmax = fabs(input_L[samplepos]) > fabs(input_R[samplepos]) ? fabs(input_L[samplepos]) : fabs(input_R[samplepos]);
-			else
-				inputmax = fabs(input_L[samplepos]);
+			const float inputmax = maxf(absf(input_L[samplepos]), absf(input_R[samplepos]));
 
 			float attenuation;
 			if (inputmax < 0.0001f)
+			{
 				attenuation = 1.0f;
-			else{
+			}
+			else
+			{
 				float inputcomp = compcurve(inputmax, k, slope, linearthreshold,
 					linearthresholdknee, threshold, knee, kneedboffset);
 				attenuation = inputcomp / inputmax;
 			}
 
 			float rate;
-			if (attenuation > detectoravg){ // if releasing
+			if (attenuation > detectoravg)
+			{ // if releasing
 				float attenuationdb = -lin2db(attenuation);
 				if (attenuationdb < 2.0f)
 					attenuationdb = 2.0f;
@@ -233,18 +243,21 @@ void compressor_process(sf_compressor_state_st *state, int size, float *input_L,
 			detectoravg = fixf(detectoravg, 1.0f);
 
 			if (enveloperate < 1) // attack, reduce gain
+			{
 				compgain += (scaleddesiredgain - compgain) * enveloperate;
-			else{ // release, increase gain
+			}
+			else
+			{ // release, increase gain
 				compgain *= enveloperate;
 				if (compgain > 1.0f)
 					compgain = 1.0f;
 			}
 
-			// apply the gain
-			output_L[samplepos] = input_L[samplepos] * mastergain * sinf(state->ang90 * compgain);
+			const float gain = mastergain * sinf(state->ang90 * compgain);
 
-			if (input_R)
-				output_R[samplepos] = input_R[samplepos] * mastergain * sinf(state->ang90 * compgain);
+			// apply the gain
+			output_L[samplepos] = input_L[samplepos] * gain;
+			output_R[samplepos] = input_R[samplepos] * gain;
 		}
 	}
 

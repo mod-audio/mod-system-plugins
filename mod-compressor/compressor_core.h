@@ -44,7 +44,7 @@ typedef struct {
 	float detectoravg;
 	float compgain;
 	float maxcompdiffdb;
-	int samplerate;
+	float samplerate;
 	float ang90;
 	float ang90inv;
 } sf_compressor_state_st;
@@ -55,7 +55,7 @@ void compressor_init(sf_compressor_state_st *state, int samplerate);
 
 // this function will process the input sound based on the state passed
 // the input and output buffers should be the same size
-void compressor_process(sf_compressor_state_st *state, int size, float *input_L, float *input_R, float *output_L, float *output_R);
+void compressor_process(sf_compressor_state_st *state, int size, const float *input_L, const float *input_R, float *output_L, float *output_R);
 
 void compressor_set_params(sf_compressor_state_st *state, float threshold,
 	float knee, float ratio, float attack, float release, float makeup);
