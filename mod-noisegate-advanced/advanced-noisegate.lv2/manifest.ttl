@@ -3,7 +3,6 @@
 @prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 
 <http://moddevices.com/plugins/mod-devel/Advanced-NoiseGate> 
-	a lv2:Plugin ;
+    a lv2:Plugin ;
     lv2:binary <advanced-noisegate.so> ;
-    rdfs:seeAlso <advanced-noisegate.ttl> ;
-	lv2:optionalFeature lv2:hardRTCapable .<http://moddevices.com/plugins/mod-devel/Advanced-NoiseGate> rdfs:seeAlso <modgui.ttl> .
+    rdfs:seeAlso <advanced-noisegate.ttl> , <modgui.ttl> .
