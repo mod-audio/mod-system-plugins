@@ -20,6 +20,10 @@
 #include <math.h>
 #include <stdbool.h>
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
+#include "lv2/lv2plug.in/ns/ext/options/options.h"
+#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 
 #include "compressor_core.h"
 
@@ -66,6 +70,8 @@ typedef struct{
     float prev_mode;
     float prev_volume;
 
+    const LV2_URID_Map* urid_map;
+
     sf_compressor_state_st compressor_state;
 
 } Compressor;
@@ -83,10 +89,39 @@ const LV2_Feature* const* features)
 {
     Compressor* self = (Compressor*)malloc(sizeof(Compressor));
 
-    self->bfr_l = (float*)malloc(COMP_BUF_SIZE*sizeof(float));
-    self->bfr_r = (float*)malloc(COMP_BUF_SIZE*sizeof(float));
+    // query host features
+    const LV2_Options_Option* options = NULL;
+    for (int i=0; features[i] != NULL; ++i)
+    {
+        if (strcmp(features[i]->URI, LV2_OPTIONS__options) == 0)
+            options = (const LV2_Options_Option*)features[i]->data;
+        else if (strcmp(features[i]->URI, LV2_URID__map) == 0)
+            self->urid_map = (const LV2_URID_Map*)features[i]->data;
+    }
+
+    // find max block length
+    int maxBufSize = COMP_BUF_SIZE;
+    for (int i=0; options[i].key != 0; ++i)
+    {
+        if (options[i].key == self->urid_map->map(self->urid_map->handle, LV2_BUF_SIZE__maxBlockLength))
+        {
+            if (options[i].type == self->urid_map->map(self->urid_map->handle, LV2_ATOM__Int))
+            {
+                maxBufSize = *(const int*)options[i].value;
+                break;
+            }
+            break;
+        }
+    }
+
+    self->bfr_l = (float*)malloc(maxBufSize*sizeof(float));
+    self->bfr_r = (float*)malloc(maxBufSize*sizeof(float));
 
     compressor_init(&self->compressor_state, samplerate);
+
+    // invalid initial values
+    self->prev_release = self->prev_mode = -9999;
+    self->prev_volume = 1.f;
 
     return (LV2_Handle)self;
 }
@@ -202,11 +237,41 @@ void deactivate(LV2_Handle instance)
 /**********************************************************************************************************************************************************/
 void cleanup(LV2_Handle instance)
 {
-    free(instance);
+    Compressor* self = (Compressor*)instance;
+
+    free(self->bfr_l);
+    free(self->bfr_r);
+    free(self);
+}
+/**********************************************************************************************************************************************************/
+uint32_t set_options(LV2_Handle instance, const LV2_Options_Option* options)
+{
+    Compressor* self = (Compressor*)instance;
+
+    for (int i=0; options[i].key != 0; ++i)
+    {
+        if (options[i].key != self->urid_map->map(self->urid_map->handle, LV2_BUF_SIZE__nominalBlockLength))
+            continue;
+
+        const int maxBufSize = *(const int*)options[i].value;
+
+        free(self->bfr_l);
+        free(self->bfr_r);
+        self->bfr_l = (float*)malloc(maxBufSize*sizeof(float));
+        self->bfr_r = (float*)malloc(maxBufSize*sizeof(float));
+        break;
+    }
+
+    return 0;
 }
 /**********************************************************************************************************************************************************/
 const void* extension_data(const char* uri)
 {
+    if (strcmp(uri, LV2_OPTIONS__interface) == 0)
+    {
+        static const LV2_Options_Interface options = { NULL, set_options };
+        return &options;
+    }
     return NULL;
 }
 /**********************************************************************************************************************************************************/

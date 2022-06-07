@@ -1,16 +1,16 @@
 #!/usr/bin/make -f
 # Makefile for advanced-compressor.lv2 #
-# --------------------------------- #
+# ------------------------------------ #
 
-include Makefile.mk
+include ../Makefile.mk
 
 NAME = advanced-compressor
 
 # --------------------------------------------------------------
 # Installation path
 
-INSTALL_PATH = /usr/local/lib/lv2
-COMPLETE_INSTALL_PATH = $(DESTDIR)$(INSTALL_PATH)/$(NAME).lv2
+PREFIX ?= /usr/local
+COMPLETE_INSTALL_PATH = $(DESTDIR)$(PREFIX)/lib/lv2/$(NAME).lv2
 
 # --------------------------------------------------------------
 # Default target is to build all plugins
@@ -36,9 +36,9 @@ clean:
 install: build
 	install -d $(DESTDIR)$(PREFIX)/lib/lv2/$(NAME).lv2
 
-	install -m 644 $(NAME).lv2/*.so  $(DESTDIR)$(PREFIX)/lib/lv2/$(NAME).lv2/
-	install -m 644 $(NAME).lv2/*.ttl $(DESTDIR)$(PREFIX)/lib/lv2/$(NAME).lv2/
-	cp -rv $(NAME).lv2/modgui $(DESTDIR)$(PREFIX)/lib/lv2/$(NAME).lv2/
+	install -m 644 $(NAME).lv2/*.so  $(COMPLETE_INSTALL_PATH)/
+	install -m 644 $(NAME).lv2/*.ttl $(COMPLETE_INSTALL_PATH)/
+	cp -rv $(NAME).lv2/modgui $(COMPLETE_INSTALL_PATH)/
 
 # --------------------------------------------------------------
 

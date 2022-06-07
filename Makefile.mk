@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
-# Makefile for system-compressor.lv2 #
-# ----------------------- #
+# Makefile for mod-system-plugins #
+# ------------------------------- #
 #
 
 AR  ?= ar
@@ -36,7 +36,7 @@ BASE_FLAGS += -fPIC -DPIC
 endif
 
 ifeq ($(DEBUG),true)
-BASE_FLAGS += -O3 -g
+BASE_FLAGS += -O0 -g
 LINK_OPTS   =
 else
 BASE_FLAGS += -DNDEBUG $(BASE_OPTS) -fvisibility=hidden -O3
@@ -57,23 +57,21 @@ endif
 # --------------------------------------------------------------
 # Set shared lib extension
 
-LIB_EXT = .so
-
 ifeq ($(MACOS),true)
 LIB_EXT = .dylib
-endif
-
-ifeq ($(WIN32),true)
+else ifeq ($(WIN32),true)
 LIB_EXT = .dll
+else
+LIB_EXT = .so
 endif
 
 # --------------------------------------------------------------
 # Set shared library CLI arg
 
-SHARED = -shared
-
 ifeq ($(MACOS),true)
 SHARED = -dynamiclib
+else
+SHARED = -shared
 endif
 
 # --------------------------------------------------------------

@@ -3,13 +3,14 @@
 @prefix epp: <http://lv2plug.in/ns/ext/port-props#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix mod: <http://moddevices.com/ns/modgui#>.
+@prefix opts: <http://lv2plug.in/ns/ext/options#>.
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix pset: <http://lv2plug.in/ns/ext/presets#>.
 @prefix units: <http://lv2plug.in/ns/extensions/units#>.
 
 <http://moddevices.com/plugins/mod-devel/System-Compressor>
-a lv2:Plugin, lv2:DynamicsPlugin;
+a lv2:Plugin, lv2:DynamicsPlugin, doap:Project;
 
 doap:name "Compressor";
 
@@ -17,16 +18,23 @@ doap:developer [
     foaf:name "VeJa Plugins";
     foaf:homepage <>;
     foaf:mbox <mailto:jan@moddevices.com>;
-    ];
+];
 
 doap:maintainer [
     foaf:name "MOD Devices";
     foaf:homepage <http://moddevices.com>;
     foaf:mbox <mailto:jan@moddevices.com>;
-    ];
+];
 
-    lv2:minorVersion 1;
-    lv2:microVersion 1;
+doap:license <http://spdx.org/licenses/ISC.html>;
+
+lv2:minorVersion 1;
+lv2:microVersion 1;
+lv2:optionalFeature lv2:hardRTCapable;
+lv2:extensionData opts:interface;
+lv2:requiredFeature <http://lv2plug.in/ns/ext/urid#map>;
+lv2:requiredFeature <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength>;
+opts:requiredOption <http://lv2plug.in/ns/ext/buf-size#maxBlockLength>;
 
 rdfs:comment """
 
@@ -48,28 +56,24 @@ lv2:port
     lv2:index 0;
     lv2:symbol "Input_L";
     lv2:name "Input Left";
-    lv2:shortname "Input Left";
 ],
 [
     a lv2:AudioPort, lv2:InputPort;
     lv2:index 1;
     lv2:symbol "Input_R";
     lv2:name "Input Right";
-    lv2:shortname "Input RIGHT";
 ],
 [
     a lv2:AudioPort, lv2:OutputPort;
     lv2:index 2;
     lv2:symbol "Output_L";
     lv2:name "Output Left";
-    lv2:shortname "Output Left";
 ],
 [
     a lv2:AudioPort, lv2:OutputPort;
     lv2:index 3;
     lv2:symbol "Output_R";
     lv2:name "Output Right";
-    lv2:shortname "Output Right";
 ],
 [
     a lv2:InputPort, lv2:ControlPort;
@@ -100,21 +104,20 @@ lv2:port
     lv2:index 5;
     lv2:symbol "RELEASE";
     lv2:name "Release";
-    lv2:shortname "Release";
     lv2:default 100;
     lv2:minimum 50;
     lv2:maximum 500;
-    units:unit   units:ms
+    units:unit units:ms
 ],
 [
     a lv2:ControlPort, lv2:InputPort;
     lv2:index 6;
     lv2:symbol "MASTER_VOL";
     lv2:name "Master Volume";
-    lv2:shortname "MasterVol";
+    lv2:shortName "MasterVol";
     lv2:default 0;
     lv2:minimum -30;
     lv2:maximum 20;
-    units:unit   units:db
+    units:unit units:db
 ]
 .
