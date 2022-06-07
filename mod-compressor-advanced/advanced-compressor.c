@@ -68,8 +68,6 @@ typedef struct{
     float* ratio;
     float* makeup;
 
-    float* volume;
-
     float *bfr_l;
     float *bfr_r;
 
@@ -79,6 +77,8 @@ typedef struct{
     float prev_release;
     float prev_ratio;
     float prev_makeup;
+
+    float linear_volume;
 
     const LV2_URID_Map* urid_map;
 
@@ -131,7 +131,7 @@ const LV2_Feature* const* features)
 
     // invalid initial values
     self->prev_threshold = self->prev_knee = self->prev_attack = self->prev_release = self->prev_ratio = -9999;
-    self->prev_makeup = 1.f;
+    self->prev_makeup = self->linear_volume = 1.f;
 
     return (LV2_Handle)self;
 }
@@ -198,19 +198,15 @@ void run(LV2_Handle instance, uint32_t n_samples)
         self->prev_release = (float)*self->release;
         self->prev_ratio = (float)*self->ratio;
         self->prev_makeup = (float)*self->makeup;
+
+        self->linear_volume = cmop_db2lin((float)*self->makeup);
     }
 
     compressor_process(&self->compressor_state, n_samples, self->input_left, self->input_right, self->bfr_l, self->bfr_r);
 
-    float linear_volume = cmop_db2lin((float)*self->makeup);
-
     for (uint32_t i = 0; i < n_samples; i++) {
-        //moving average over volume, reduces zipper noise
-        if (self->prev_makeup != linear_volume)
-            self->prev_makeup = DEZIPPER_CONSTANT * linear_volume + (1.0 - DEZIPPER_CONSTANT) * self->prev_makeup;
-
-        self->output_left[i] = self->bfr_l[i] * self->prev_makeup;
-        self->output_right[i] = self->bfr_r[i] * self->prev_makeup;
+        self->output_left[i] = self->bfr_l[i] * self->linear_volume;
+        self->output_right[i] = self->bfr_r[i] * self->linear_volume;
     }
 }
 
