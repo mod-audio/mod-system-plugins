@@ -125,8 +125,8 @@ void run(LV2_Handle instance, uint32_t n_samples)
 
     for (uint32_t i = 0; i < n_samples; ++i)
     {
-        Gate_RunGate(&self->noisegate, self->key[i]);
-        self->output[i] = Gate_ApplyGate(&self->noisegate, self->input[i]);
+        Gate_PushSamples(&self->noisegate, self->key[i], 0.f);
+        self->output[i] = Gate_RunGate(&self->noisegate, self->input[i]);
     }
 }
 

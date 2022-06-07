@@ -36,6 +36,7 @@ rdfs:comment """
 The MOD Noise Gate Advanced uses the same algorithm as the Noise Gate found in the MOD Dwarf's and Duox's input processing settings.
 
 This advanced version exposes all parameters of the algorithm, and therefore allows for more in depth control.
+This mono plugin has 2 inputs; the first of which has the gate applied, while the second input opens and closes the gate.
 For a more streamlined experience, try the MOD Noise Gate plugin.
 
 Features:
