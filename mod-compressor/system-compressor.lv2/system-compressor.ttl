@@ -40,7 +40,7 @@ rdfs:comment """
 
 The MOD Compressor is a streamlined high quality end-of-chain compressor which can also be found in the MOD Dwarf's and Duox's output processing settings.
 
-There are 4 modes available: off, light, mild and heavy compression.
+There are 3 modes available: light, mild and heavy compression.
 There is also a release time parameter, and a simple gain parameter.
 For more in depth control, try the MOD Compressor Advanced plugin.
 
@@ -81,14 +81,11 @@ lv2:port
     lv2:symbol "COMP_MODE";
     lv2:name "Comp Mode";
     lv2:portProperty lv2:enumeration , lv2:integer ;
-    lv2:default 0 ;
-    lv2:minimum 0 ;
-    lv2:maximum 4 ;
+    lv2:default 1 ;
+    lv2:minimum 1 ;
+    lv2:maximum 3 ;
     lv2:scalePoint
     [
-        rdfs:label "Off" ;
-        rdf:value 0 
-    ] , [
         rdfs:label "Light Comp" ;
         rdf:value 1 
     ] , [
