@@ -34,7 +34,8 @@ typedef enum {
     PLUGIN_THRESHOLD,
     PLUGIN_ATTACK,
     PLUGIN_HOLD,
-    PLUGIN_DECAY
+    PLUGIN_DECAY,
+    PLUGIN_CVOUT
 }PortIndex;
 
 /**********************************************************************************************************************************************************/
@@ -49,6 +50,7 @@ typedef struct{
     float*           attack;
     float*             hold;
     float*            decay;
+    float*            CVout;
 
     uint32_t     sampleRate;
 
@@ -103,6 +105,9 @@ static void connect_port(LV2_Handle instance, uint32_t port, void *data)
         case PLUGIN_DECAY:
             self->decay = (float*) data;
             break;
+        case PLUGIN_CVOUT:
+            self->CVout = (float*) data;
+            break;
     }
 }
 /**********************************************************************************************************************************************************/
@@ -123,10 +128,13 @@ void run(LV2_Handle instance, uint32_t n_samples)
                          (uint32_t)*self->decay, 1, *self->threshold, *self->threshold - 20.0f);
 
 
+    float cv_value = (self->noisegate._gainFactor == 0) ? 0 : 10;
+
     for (uint32_t i = 0; i < n_samples; ++i)
     {
         Gate_PushSamples(&self->noisegate, self->key[i], 0.f);
         self->output[i] = Gate_RunGate(&self->noisegate, self->input[i]);
+        self->CVout[i] = cv_value;
     }
 }
 
