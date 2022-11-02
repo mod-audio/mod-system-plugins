@@ -40,6 +40,7 @@ The MOD Noise Gate Advanced uses the same algorithm as the Noise Gate found in t
 
 This advanced version exposes all parameters of the algorithm, and therefore allows for more in depth control.
 This mono plugin has 2 inputs; the first of which has the gate applied, while the second input opens and closes the gate.
+The plugin also features a CV output, which indicates if the gate is opened or closed. This signal can be used to modulate other effects.
 For a more streamlined experience, try the MOD Noise Gate plugin.
 
 Features:
@@ -107,4 +108,12 @@ lv2:port
     lv2:minimum 1;
     lv2:maximum 1000;
     units:unit units:ms
+],
+[
+    a lv2:OutputPort, lv2:CVPort, mod:CVPort;
+    lv2:index 7;
+    lv2:minimum 0.0 ;
+    lv2:maximum 10.0 ;
+    lv2:symbol "Cvoutput";
+    lv2:name "CV Output";
 ].
