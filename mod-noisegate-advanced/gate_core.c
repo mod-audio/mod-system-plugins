@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
- * VEJA NoiseGate
- * Copyright (C) 2021 Jan Janssen <jan@moddevices.com>
+ * VeJa NoiseGate
+ * Copyright (C) 2022 Jan Janssen <veja.plugins@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any purpose with
  * or without fee is hereby granted, provided that the above copyright notice and this
@@ -71,7 +71,14 @@ float Gate_RunGate(gate_t *gate, const float input)
     switch (gate->_currentState)
     {
         case IDLE:
-            gate->_rmsValue = sqrt(gate->_keyValue * gate->_keyValue) * 0.707106781187;
+            gate->_rmsValue = fabs(gate->_keyValue) * 0.707106781187;
+
+            // add a bit of hysterisis in case the gate is in atack state and the RMS is close to the threshold, avoid rapid open/close states
+            if ((gate->_rmsValue < gate->_upperThreshold) && (gate->_attackCounter != 0))
+            {
+                gate->_rmsValue += 0.1f;
+            }
+
             if (gate->_rmsValue > gate->_upperThreshold)
             {
                 if (gate->_attackCounter > gate->_attackTime)
@@ -91,11 +98,32 @@ float Gate_RunGate(gate_t *gate, const float input)
                 }
             }
             else
-                gate->_gainFactor = 0.0f;
+            {
+                if (gate->_attackCounter != 0)
+                {
+                    if (gate->_attackCounter > gate->_holdTime)
+                    {
+                        gate->_currentState = HOLD;
+                        gate->_holdCounter = 0;
+                        gate->_attackCounter = 0;
+                        gate->_gainFactor = 1.0f;
+                    }
+                    else
+                    {
+                        gate->_currentState = DECAY;
+                        gate->_decayCounter = gate->_attackCounter;
+                        gate->_holdCounter = 0;
+                        gate->_attackCounter = 0;
+                        gate->_gainFactor = powf((float)gate->_decayCounter, 2.0f) / powf((float)gate->_attackTime, 2.0f);
+                    }
+                }
+                else
+                    gate->_gainFactor = 0.0f;
+            }
         break;
 
         case HOLD:
-            gate->_rmsValue = sqrt(gate->_keyValue * gate->_keyValue) * 0.707106781187;
+            gate->_rmsValue = fabs(gate->_keyValue) * 0.707106781187;
             if (gate->_rmsValue > gate->_lowerThreshold)
                 gate->_holdCounter = 0;
             else if (gate->_holdCounter < gate->_holdTime)
@@ -110,7 +138,7 @@ float Gate_RunGate(gate_t *gate, const float input)
         break;
 
         case DECAY:
-            gate->_rmsValue = sqrt(gate->_keyValue * gate->_keyValue) * 0.707106781187;
+            gate->_rmsValue = fabs(gate->_keyValue) * 0.707106781187;
             if (gate->_rmsValue > gate->_upperThreshold)
             {
                 if (gate->_attackCounter > gate->_attackTime)
